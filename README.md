@@ -20,3 +20,13 @@ go run helloworld.go
 ```
 
 Open Browser and check http://localhost:8004
+
+Or You Can Just Run
+
+```
+
+python -m SimpleHTTPServer 
+
+```
+
+and open the Browser http://localhost:8000
