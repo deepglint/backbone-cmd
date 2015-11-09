@@ -39,7 +39,7 @@
 				var data={hello:"world"}
 				$.ajax({
 					type:'POST',
-					url:"/test{{component}}",
+					url:"test{{component}}",
 					cache:false,
 					data:JSON.stringify(data),
 					contentType:"application/json",
