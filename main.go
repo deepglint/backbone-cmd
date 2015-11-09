@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Version = "0.1.0"
+	Version = "0.1.2"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 			Subcommands: []cli.Command{
 				{
 					Name:   "create",
-					Usage:  "Create the script",
+					Usage:  "yourname componentname vulcandaddr localhostaddr, like :backbone vulcand create huangyan helloworld http://192.168.5.46:8182 http://192.168.1.24:8004",
 					Action: vulcandCreate,
 				},
 			},

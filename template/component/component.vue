@@ -86,6 +86,6 @@
 
 <!-- <div>This is component {{component}}</div>
  -->
- <button v-on="click:sendurl()">ClickMe</button>
+ <button v-on:click="sendurl()">ClickMe</button>
  </template>
 <style type="text/css"></style>
