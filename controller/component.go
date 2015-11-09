@@ -10,6 +10,62 @@ import (
 	"strings"
 )
 
+func CreateVulcand(name string, component string, vulcandaddr string, localaddr string, p string) error {
+	log.Println(os.Getenv("GOPATH"))
+	var gopath string
+	if gopath = os.Getenv("GOPATH"); gopath == "" {
+		return errors.New("The env variable GOPATH is not existed")
+	}
+
+	var proj = path.Join(gopath, "src", "github.com/deepglint/backbone-cmd")
+	//log.Println(proj)
+	if _, err := os.Stat(proj); err != nil {
+
+		return errors.New("The Project github.com/deepglint/backbone-cmd is not exist")
+	} else {
+
+		if err := execVulcandScript(name, component, vulcandaddr, localaddr, path.Join(proj, "template", "vulcand", "gen_to_vulcand.sh"), "./gen_to_vulcand.sh"); err != nil {
+
+			return err
+		}
+
+	}
+	return nil
+}
+
+func execVulcandScript(name string, component string, vulcandaddr string, localaddr string, source string, dest string) error {
+	cmd := exec.Command("cp", "-rf", source, dest)
+	if err := cmd.Run(); err != nil {
+		log.Println("error for copy files")
+		log.Println(err)
+		return err
+	}
+	if err := replaceScript(name, component, vulcandaddr, localaddr, dest); err != nil {
+		return err
+	}
+	return nil
+}
+
+func replaceScript(name string, component string, vulcand string, localaddr string, p string) error {
+	input, err := ioutil.ReadFile(p)
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+
+	output := strings.Replace(string(input), "{{component}}", component, -1)
+	output = strings.Replace(string(output), "{{username}}", name, -1)
+	output = strings.Replace(string(output), "{{vulcandaddr}}", vulcand, -1)
+	output = strings.Replace(string(output), "{{localaddr}}", localaddr, -1)
+
+	err = ioutil.WriteFile(p, []byte(output), 0777)
+	if err != nil {
+		log.Fatalln(err)
+		return err
+	}
+	return nil
+}
+
 func CreateComponent(name string, p string) error {
 	log.Println(os.Getenv("GOPATH"))
 	var gopath string

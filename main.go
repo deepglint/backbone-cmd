@@ -28,6 +28,16 @@ func main() {
 					Action: componentCreate,
 				},
 			},
+		}, {
+			Name:  "vulcand",
+			Usage: "Generate Vulcand Script",
+			Subcommands: []cli.Command{
+				{
+					Name:   "create",
+					Usage:  "Create the script",
+					Action: vulcandCreate,
+				},
+			},
 		},
 	}
 	app.Run(os.Args)
@@ -40,4 +50,13 @@ func componentCreate(ctx *cli.Context) {
 		return
 	}
 	controller.CreateComponent(arg[0], "./")
+}
+func vulcandCreate(ctx *cli.Context) {
+	arg := ctx.Args()
+	if len(arg) != 4 {
+		log.Println("Please tell the name of you and the name of component")
+		return
+	}
+	controller.CreateVulcand(arg[0], arg[1], arg[2], arg[3], "./")
+
 }
