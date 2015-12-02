@@ -4,7 +4,11 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/deepglint/backbone-cmd/controller"
 	"log"
+	"net/http"
 	"os"
+	"os/exec"
+	//"strconv"
+	"time"
 )
 
 var (
@@ -38,9 +42,54 @@ func main() {
 					Action: vulcandCreate,
 				},
 			},
+		}, {
+			Name:  "git",
+			Usage: "For github things",
+			Subcommands: []cli.Command{
+				{
+					Name:   "watch",
+					Usage:  "always update the github repo",
+					Action: gitWatch,
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "port,p",
+							Value: "8030",
+							Usage: "The update port to listen",
+						}, cli.StringFlag{
+							Name:  "span,s",
+							Value: "3",
+							Usage: "Sleep time for every update",
+						},
+					},
+				},
+			},
 		},
 	}
 	app.Run(os.Args)
+}
+
+func gitWatch(ctx *cli.Context) {
+	go func() {
+		_ = execCommand("git", []string{"pull"})
+		//i, _ := strconv.ParseInt(ctx.String("span"))
+		time.Sleep(time.Second * time.Duration(3))
+	}()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/query", handleUpdate)
+	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
+}
+
+func handleUpdate(w http.ResponseWriter, r *http.Request) {
+	o := execCommand("git", []string{"pull"})
+	w.Write(o)
+}
+
+func execCommand(name string, args []string) []byte {
+	out, err := exec.Command(name, args...).Output()
+	if err != nil {
+		return []byte(err.Error())
+	}
+	return out
 }
 
 func componentCreate(ctx *cli.Context) {

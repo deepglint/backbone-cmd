@@ -51,10 +51,10 @@ backbone vulcand create yourname yourcomponent http://192.168.5.46:8182 http://y
 bash gen_to_vulcand.sh
 
 ```
-and open http://192.168.5.46:8182/yourname/yourcomponent/
+and open http://192.168.5.46:8181/yourname/yourcomponent/
 
 The Bumble_bee api:
 
-/bumble/api/....
+http://192.168.5.46:8181/bumble/api/....
 
 By yanhuang@deepglint.com
