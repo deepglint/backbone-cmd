@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/codegangsta/cli"
 	"github.com/deepglint/backbone-cmd/controller"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -47,6 +48,10 @@ func main() {
 			Usage: "For github things",
 			Subcommands: []cli.Command{
 				{
+					Name:   "sync",
+					Usage:  "make a client to update",
+					Action: gitSync,
+				}, {
 					Name:   "watch",
 					Usage:  "always update the github repo",
 					Action: gitWatch,
@@ -68,14 +73,32 @@ func main() {
 	app.Run(os.Args)
 }
 
+func gitSync(ctx *cli.Context) {
+	if len(ctx.Args()) != 1 {
+		log.Println("Error for arg number,please tell the address for remote backbone")
+	}
+	r, err := http.Get(ctx.Args()[0])
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	println(string(b))
+}
+
 func gitWatch(ctx *cli.Context) {
 	go func() {
-		_ = execCommand("git", []string{"pull"})
+		o := execCommand("git", []string{"pull"})
 		//i, _ := strconv.ParseInt(ctx.String("span"))
-		time.Sleep(time.Second * time.Duration(3))
+		log.Println(string(o))
+		time.Sleep(time.Second * time.Duration(60))
 	}()
 	mux := http.NewServeMux()
-	mux.HandleFunc("/query", handleUpdate)
+	mux.HandleFunc("/pull", handleUpdate)
 	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
 }
 
