@@ -77,7 +77,7 @@ func gitSync(ctx *cli.Context) {
 	if len(ctx.Args()) != 1 {
 		log.Println("Error for arg number,please tell the address for remote backbone")
 	}
-	r, err := http.Get(ctx.Args()[0])
+	r, err := http.Get(ctx.Args()[0] + "/pull")
 	if err != nil {
 		println(err.Error())
 		return
