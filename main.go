@@ -92,10 +92,13 @@ func gitSync(ctx *cli.Context) {
 
 func gitWatch(ctx *cli.Context) {
 	go func() {
-		o := execCommand("git", []string{"pull"})
-		//i, _ := strconv.ParseInt(ctx.String("span"))
-		log.Println(string(o))
-		time.Sleep(time.Second * time.Duration(60))
+		for {
+			o := execCommand("git", []string{"pull"})
+			//i, _ := strconv.ParseInt(ctx.String("span"))
+			log.Println(string(o))
+			time.Sleep(time.Second * time.Duration(10))
+			continue
+		}
 	}()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/pull", handleUpdate)
