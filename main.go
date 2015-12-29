@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/codegangsta/cli"
 	"github.com/deepglint/backbone-cmd/controller"
+	"gopkg.in/gomail.v2"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,9 +14,14 @@ import (
 )
 
 var (
-	Version = "0.1.2"
+	Version = "0.1.3"
 )
 
+///
+///
+///
+///
+///
 func main() {
 	app := cli.NewApp()
 	app.Name = "backbone-cli"
@@ -90,6 +96,11 @@ func gitSync(ctx *cli.Context) {
 	println(string(b))
 }
 
+///
+///The Git Watch Helper
+///Using /pull to pull the code from repo
+///Using /release?tag=... to add the tag and release the code
+///
 func gitWatch(ctx *cli.Context) {
 	go func() {
 		for {
@@ -102,7 +113,34 @@ func gitWatch(ctx *cli.Context) {
 	}()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/pull", handleUpdate)
+	mux.HandleFunc("/build", handleTag)
+	mux.HandleFunc("/release", handleRelease)
 	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
+}
+
+func handleRelease(w http.ResponseWriter, r *http.Request) {
+	var t = r.URL.Query().Get("tag")
+	println("Getting Tag :" + t)
+	attach := "../build/backbone_" + t + ".tar.gz"
+	// o := execCommand("git", []string{"tag", t})
+	// o = execCommand("git", []string{"push", "--tag"})
+	//o := execCommand("bash", []string{"build.sh", t})
+	user := r.URL.Query().Get("user")
+	pass := r.URL.Query().Get("pass")
+	sub := "Backbone " + t + " Release"
+	c, _ := ioutil.ReadFile("release-note.html")
+	//sendMail("Backbone "+t+" Release", string(c), "../build/backbone_"+t+".tar.gz", user, pass)
+	sendMail2(sub, string(c), attach, user, pass)
+	w.Write([]byte("done"))
+}
+
+func handleTag(w http.ResponseWriter, r *http.Request) {
+	var t = r.URL.Query().Get("tag")
+	println("Getting Tag :" + t)
+	// o := execCommand("git", []string{"tag", t})
+	// o = execCommand("git", []string{"push", "--tag"})
+	o := execCommand("bash", []string{"build.sh", t})
+	w.Write(o)
 }
 
 func handleUpdate(w http.ResponseWriter, r *http.Request) {
@@ -134,4 +172,38 @@ func vulcandCreate(ctx *cli.Context) {
 	}
 	controller.CreateVulcand(arg[0], arg[1], arg[2], arg[3], "./")
 
+}
+func sendMail2(sub string, content string, attach string, user string, pass string) {
+	m := gomail.NewMessage()
+	m.SetHeader("From", "backbone@deepglint.com")
+	m.SetHeader("To", "yanhuang@deepglint.com")
+	//m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
+	//m.SetAddressHeader("Cc", "libra@deepglint.com")
+	m.SetHeader("Subject", sub)
+	m.SetBody("text/html", content)
+	m.Attach(attach)
+
+	d := gomail.NewPlainDialer("smtp.exmail.qq.com", 465, user, pass)
+
+	// Send the email to Bob, Cora and Dan.
+	if err := d.DialAndSend(m); err != nil {
+		panic(err)
+	}
+}
+func sendMail(sub string, content string, attach string, user string, pass string) {
+	m := gomail.NewMessage()
+	m.SetHeader("From", "backbone@deepglint.com")
+	//m.SetHeader("To", "yanhuang@deepglint.com")
+	//m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
+	//m.SetAddressHeader("Cc", "libra@deepglint")
+	m.SetHeader("Subject", sub)
+	m.SetBody("text/html", content)
+	m.Attach(attach)
+	log.Println(sub, content, attach, user, pass)
+	d := gomail.NewPlainDialer("smtp.exmail.qq.com", 465, user, pass)
+
+	// Send the email to Bob, Cora and Dan.
+	if err := d.DialAndSend(m); err != nil {
+		panic(err)
+	}
 }
