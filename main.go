@@ -111,11 +111,20 @@ func gitWatch(ctx *cli.Context) {
 			continue
 		}
 	}()
+	fs := http.FileServer(http.Dir("../build/"))
+	//http.Handle("/", fs)
 	mux := http.NewServeMux()
+	mux.Handle("/", fs)
 	mux.HandleFunc("/pull", handleUpdate)
 	mux.HandleFunc("/build", handleTag)
 	mux.HandleFunc("/release", handleRelease)
+	mux.HandleFunc("/ls", handleLs)
 	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
+}
+
+func handleLs(w http.ResponseWriter, r *http.Request) {
+	o := execCommand("ls", []string{"../build/"})
+	w.Write(o)
 }
 
 func handleRelease(w http.ResponseWriter, r *http.Request) {
