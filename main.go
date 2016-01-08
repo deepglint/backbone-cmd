@@ -185,9 +185,9 @@ func vulcandCreate(ctx *cli.Context) {
 func sendMail2(sub string, content string, attach string, user string, pass string) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", "backbone@deepglint.com")
-	m.SetHeader("To", "yanhuang@deepglint.com")
-	//m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
-	//m.SetAddressHeader("Cc", "libra@deepglint.com")
+	//m.SetHeader("To", "yanhuang@deepglint.com")
+	m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
+	m.SetAddressHeader("Cc", "libra@deepglint.com")
 	m.SetHeader("Subject", sub)
 	m.SetBody("text/html", content)
 	m.Attach(attach)
