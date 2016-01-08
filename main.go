@@ -204,7 +204,8 @@ func sendMail(sub string, content string, attach string, user string, pass strin
 	m.SetHeader("From", "backbone@deepglint.com")
 	//m.SetHeader("To", "yanhuang@deepglint.com")
 	m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
-	m.SetAddressHeader("Cc", "libra@deepglint")
+	m.SetHeader("Cc", "libra@deepglint")
+
 	m.SetHeader("Subject", sub)
 	m.SetBody("text/html", content)
 	m.Attach(attach)
