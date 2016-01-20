@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/exec"
 	//"strconv"
+	"bytes"
+	"fmt"
 	"time"
 )
 
@@ -118,12 +120,35 @@ func gitWatch(ctx *cli.Context) {
 	mux.HandleFunc("/pull", handleUpdate)
 	mux.HandleFunc("/build", handleTag)
 	mux.HandleFunc("/release", handleRelease)
+	mux.HandleFunc("/install", handleInstall)
 	mux.HandleFunc("/ls", handleLs)
 	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
 }
 
 func handleLs(w http.ResponseWriter, r *http.Request) {
 	o := execCommand("ls", []string{"../build/"})
+	w.Write(o)
+}
+
+func handleInstall(w http.ResponseWriter, r *http.Request) {
+	var ip = r.URL.Query().Get("ip")
+	var version = r.URL.Query().Get("tag")
+
+	println(ip)
+	println(version)
+
+	if ip == "" || version == "" {
+		w.Write([]byte("Please note the ip arg and version arg"))
+		return
+	}
+	pwd, _ := os.Getwd()
+	println(pwd)
+	//o := execCommand("ssh", []string{"ubuntu@192.168.4.30 'bash -s' < install.sh v0.1.1.test"})
+
+	//o := execCommand("ssh", []string{"ubuntu@192.168.4.30", "'bash -s' < ", pwd + "/install.sh", "v0.1.1.test"})
+	o := execCommand("bash", []string{"cmd.sh", ip, version})
+
+	//o := execCommand("ls", []string{"./"})
 	w.Write(o)
 }
 
@@ -158,11 +183,17 @@ func handleUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func execCommand(name string, args []string) []byte {
-	out, err := exec.Command(name, args...).Output()
+	cmd := exec.Command(name, args...)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
 	if err != nil {
-		return []byte(err.Error())
+
+		return []byte(fmt.Sprint(err) + ": " + stderr.String())
 	}
-	return out
+	return []byte(out.String())
 }
 
 func componentCreate(ctx *cli.Context) {
