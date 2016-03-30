@@ -155,13 +155,13 @@ func handleInstall(w http.ResponseWriter, r *http.Request) {
 func handleRelease(w http.ResponseWriter, r *http.Request) {
 	var t = r.URL.Query().Get("tag")
 	println("Getting Tag :" + t)
-	attach := "../build/backbone_" + t + ".tar.gz"
+	attach := "../build/" + t + ".tar.gz"
 	// o := execCommand("git", []string{"tag", t})
 	// o = execCommand("git", []string{"push", "--tag"})
 	//o := execCommand("bash", []string{"build.sh", t})
 	user := r.URL.Query().Get("user")
 	pass := r.URL.Query().Get("pass")
-	sub := "Backbone " + t + " Release"
+	sub := t + " Release"
 	c, _ := ioutil.ReadFile("release-note.html")
 	//sendMail("Backbone "+t+" Release", string(c), "../build/backbone_"+t+".tar.gz", user, pass)
 	sendMail2(sub, string(c), attach, user, pass)
