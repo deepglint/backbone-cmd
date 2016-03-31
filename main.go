@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/codegangsta/cli"
 	"github.com/deepglint/backbone-cmd/controller"
 	"gopkg.in/gomail.v2"
@@ -16,8 +17,21 @@ import (
 )
 
 var (
-	Version = "0.2.0"
+	Version = "0.2.1"
 )
+
+type MailConfig struct {
+	From         string   `json:"from"`
+	To           []string `json:"to"`
+	Cc           []string `json:"cc"`
+	Username     string   `json:"username"`
+	Password     string   `json:"password"`
+	Build_Dir    string   `json:"build_dir"`
+	Sub          string   `json:"sub"`
+	Content_Path string   `json:"content_path`
+	Content      string   `json:"content"`
+	Attachment   string   `json:"attach"`
+}
 
 ///
 ///
@@ -120,6 +134,7 @@ func gitWatch(ctx *cli.Context) {
 	mux.HandleFunc("/pull", handleUpdate)
 	mux.HandleFunc("/build", handleTag)
 	mux.HandleFunc("/release", handleRelease)
+	mux.HandleFunc("/liverelease", handleLiveRelease)
 	mux.HandleFunc("/install", handleInstall)
 	mux.HandleFunc("/ls", handleLs)
 	http.ListenAndServe("0.0.0.0:"+ctx.String("port"), mux)
@@ -152,22 +167,81 @@ func handleInstall(w http.ResponseWriter, r *http.Request) {
 	w.Write(o)
 }
 
-func handleRelease(w http.ResponseWriter, r *http.Request) {
+func handleLiveRelease(w http.ResponseWriter, r *http.Request) {
+	m, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.Write([]byte("Error for Reading Mail Config Json :" + err.Error()))
+		return
+	}
+	var mc MailConfig
+	err = json.Unmarshal(m, &mc)
+	if err != nil {
+		w.Write([]byte("Error for Unmarshalling Mail Config Json :" + err.Error()))
+		return
+	}
+
 	var t = r.URL.Query().Get("tag")
 	println("Getting Tag :" + t)
-	attach := "../build/" + t + ".tar.gz"
-	// o := execCommand("git", []string{"tag", t})
-	// o = execCommand("git", []string{"push", "--tag"})
-	//o := execCommand("bash", []string{"build.sh", t})
-	user := r.URL.Query().Get("user")
-	pass := r.URL.Query().Get("pass")
-	sub := t + " Release"
-	c, _ := ioutil.ReadFile("release-note.html")
-	//sendMail("Backbone "+t+" Release", string(c), "../build/backbone_"+t+".tar.gz", user, pass)
-	sendMail2(sub, string(c), attach, user, pass)
+	mc.Sub = t + " Release"
+	c, _ := ioutil.ReadFile(mc.Content_Path)
+	mc.Content = string(c)
+	mc.Attachment = mc.Build_Dir + t + ".tar.gz"
+	if _, err := os.Stat(mc.Attachment); err != nil {
+		w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
+		return
+	}
+	log.Println(mc)
+	sendMail2(mc)
 	w.Write([]byte("done"))
 }
 
+func handleRelease(w http.ResponseWriter, r *http.Request) {
+	m, err := ioutil.ReadFile("./mailconfig.json")
+	if err != nil {
+		w.Write([]byte("Error for Reading Mail Config Json :" + err.Error()))
+		return
+	}
+	var mc MailConfig
+	err = json.Unmarshal(m, &mc)
+	if err != nil {
+		w.Write([]byte("Error for Unmarshalling Mail Config Json :" + err.Error()))
+		return
+	}
+
+	var t = r.URL.Query().Get("tag")
+	println("Getting Tag :" + t)
+	mc.Sub = t + " Release"
+	c, _ := ioutil.ReadFile(mc.Content_Path)
+	mc.Content = string(c)
+	mc.Attachment = mc.Build_Dir + t + ".tar.gz"
+	if _, err := os.Stat(mc.Attachment); err != nil {
+		w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
+		return
+	}
+	log.Println(mc)
+	sendMail2(mc)
+	w.Write([]byte("done"))
+}
+func sendMail2(mc MailConfig) {
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", mc.From)
+	//m.SetHeader("To", "yanhuang@deepglint.com")
+	m.SetHeader("To", mc.To...)
+	m.SetHeader("Cc", mc.To...)
+	m.SetHeader("Subject", mc.Sub)
+	m.SetBody("text/html", mc.Content)
+
+	m.Attach(mc.Attachment)
+	log.Println("Here Is in the Send Mail Routine")
+	log.Println(mc)
+	d := gomail.NewPlainDialer("smtp.exmail.qq.com", 465, mc.Username, mc.Password)
+
+	// Send the email to Bob, Cora and Dan.
+	if err := d.DialAndSend(m); err != nil {
+		panic(err)
+	}
+}
 func handleTag(w http.ResponseWriter, r *http.Request) {
 	var t = r.URL.Query().Get("tag")
 	println("Getting Tag :" + t)
@@ -213,24 +287,9 @@ func vulcandCreate(ctx *cli.Context) {
 	controller.CreateVulcand(arg[0], arg[1], arg[2], arg[3], "./")
 
 }
-func sendMail2(sub string, content string, attach string, user string, pass string) {
-	m := gomail.NewMessage()
-	m.SetHeader("From", "backbone@deepglint.com")
-	//m.SetHeader("To", "yanhuang@deepglint.com")
-	m.SetHeader("To", "weiranyuan@deepglint.com", "zhenyuchen@deepglint.com", "yunhou@deepglint.com", "huiyanliu@deepglint.com", "yanzhang@deepglint.com")
-	m.SetHeader("Cc", "libra@deepglint.com")
-	m.SetHeader("Subject", sub)
-	m.SetBody("text/html", content)
-	m.Attach(attach)
 
-	d := gomail.NewPlainDialer("smtp.exmail.qq.com", 465, user, pass)
-
-	// Send the email to Bob, Cora and Dan.
-	if err := d.DialAndSend(m); err != nil {
-		panic(err)
-	}
-}
 func sendMail(sub string, content string, attach string, user string, pass string) {
+
 	m := gomail.NewMessage()
 	m.SetHeader("From", "backbone@deepglint.com")
 	//m.SetHeader("To", "yanhuang@deepglint.com")
