@@ -33,11 +33,7 @@ type MailConfig struct {
 	Attachment   string   `json:"attach"`
 }
 
-///
-///
-///
-///
-///
+// main
 func main() {
 	app := cli.NewApp()
 	app.Name = "backbone-cli"
@@ -90,11 +86,22 @@ func main() {
 					},
 				},
 			},
+		}, {
+			Name:  "scaffold",
+			Usage: "脚手架",
+			Subcommands: []cli.Command{
+				{
+					Name:   "init",
+					Usage:  "脚手架初始化",
+					Action: scaffoldInit,
+				},
+			},
 		},
 	}
 	app.Run(os.Args)
 }
 
+// git 同步
 func gitSync(ctx *cli.Context) {
 	if len(ctx.Args()) != 1 {
 		log.Println("Error for arg number,please tell the address for remote backbone")
@@ -270,6 +277,7 @@ func execCommand(name string, args []string) []byte {
 	return []byte(out.String())
 }
 
+// 新建组件
 func componentCreate(ctx *cli.Context) {
 	arg := ctx.Args()
 	if len(arg) != 1 {
@@ -278,6 +286,8 @@ func componentCreate(ctx *cli.Context) {
 	}
 	controller.CreateComponent(arg[0], "./")
 }
+
+// vulcand创建规则
 func vulcandCreate(ctx *cli.Context) {
 	arg := ctx.Args()
 	if len(arg) != 4 {
@@ -306,4 +316,16 @@ func sendMail(sub string, content string, attach string, user string, pass strin
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
 	}
+}
+
+// 脚手架
+func scaffoldInit(ctx *cli.Context) {
+	arg := ctx.Args()
+	switch len(arg) {
+	case 0:
+		controller.InitScaffold()
+	case 1:
+		controller.InitScaffoldByName(arg[0])
+	}
+
 }
