@@ -192,7 +192,11 @@ func handleLiveRelease(w http.ResponseWriter, r *http.Request) {
 	mc.Sub = t + " Release"
 	c, _ := ioutil.ReadFile(mc.Content_Path)
 	mc.Content = string(c)
-	mc.Attachment = mc.Build_Dir + t + ".tar.gz"
+	if mc.Build_Dir != "None" {
+		mc.Attachment = mc.Build_Dir + t + ".tar.gz"
+	} else {
+		mc.Attachment = ""
+	}
 	if _, err := os.Stat(mc.Attachment); err != nil {
 		w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
 		return
