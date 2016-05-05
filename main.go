@@ -238,8 +238,9 @@ func sendMail2(mc MailConfig) {
 	m.SetHeader("Cc", mc.To...)
 	m.SetHeader("Subject", mc.Sub)
 	m.SetBody("text/html", mc.Content)
-
-	m.Attach(mc.Attachment)
+	if mc.Attachment != "" || mc.Attachment != "None" {
+		m.Attach(mc.Attachment)
+	}
 	log.Println("Here Is in the Send Mail Routine")
 	log.Println(mc)
 	d := gomail.NewPlainDialer("smtp.exmail.qq.com", 465, mc.Username, mc.Password)
