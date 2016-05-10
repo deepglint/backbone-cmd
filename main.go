@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/deepglint/backbone-cmd/controller"
 	"gopkg.in/gomail.v2"
@@ -10,9 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	//"strconv"
-	"bytes"
-	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -66,6 +66,18 @@ func main() {
 			Usage: "For github things",
 			Subcommands: []cli.Command{
 				{
+					Name:  "push",
+					Usage: "push with tag",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "tag,t",
+							Value: "",
+							Usage: "Tag for the project",
+						},
+					},
+					Action: gitPush,
+				},
+				{
 					Name:   "sync",
 					Usage:  "make a client to update",
 					Action: gitSync,
@@ -99,6 +111,25 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
+}
+
+//git push tags
+
+func gitPush(ctx *cli.Context) {
+	// if len(ctx.Args()) != 1 {
+	// 	log.Println("Error for arg number,please assign the tag you release")
+	// }
+	t := ctx.String("tag")
+	if t == "" {
+		//strconv.Itoa(i)
+		println("The tag argument not assigned,using timestamp as default")
+		t = strconv.FormatInt(time.Now().Unix(), 10)
+		t = "defualt-tag-" + t
+		println(t)
+	}
+	o := execCommand("bash", []string{"push.sh", t})
+	println(string(o))
+
 }
 
 // git 同步
