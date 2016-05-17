@@ -229,8 +229,10 @@ func handleLiveRelease(w http.ResponseWriter, r *http.Request) {
 		mc.Attachment = ""
 	}
 	if _, err := os.Stat(mc.Attachment); err != nil {
-		w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
-		return
+		log.Println("Error for Checking The AttachMent :" + err.Error())
+		mc.Attachment = "None"
+		//w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
+		//return
 	}
 	log.Println(mc)
 	sendMail2(mc)
@@ -260,12 +262,12 @@ func handleRelease(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error for Checking The AttachMent :" + err.Error()))
 		return
 	}
-	log.Println(mc)
+	//log.Println(mc)
 	sendMail2(mc)
 	w.Write([]byte("done"))
 }
 func sendMail2(mc MailConfig) {
-
+	//log.Println("here3")
 	m := gomail.NewMessage()
 	m.SetHeader("From", mc.From)
 	//m.SetHeader("To", "yanhuang@deepglint.com")
@@ -273,8 +275,12 @@ func sendMail2(mc MailConfig) {
 	m.SetHeader("Cc", mc.To...)
 	m.SetHeader("Subject", mc.Sub)
 	m.SetBody("text/html", mc.Content)
-	if mc.Attachment != "" || mc.Attachment != "None" {
+	log.Println(mc)
+	if mc.Attachment != "" && mc.Attachment != "None" {
+		//log.Println("Here")
 		m.Attach(mc.Attachment)
+	} else {
+		log.Println("Ignore Attachment")
 	}
 	log.Println("Here Is in the Send Mail Routine")
 	log.Println(mc)
