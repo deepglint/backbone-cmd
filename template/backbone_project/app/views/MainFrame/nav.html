@@ -1,0 +1,100 @@
+<nav class="navbar navbar-fixed-top">
+    <div class="container-fluid">
+
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed btn-sidebar" id="menu-toggler">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+          </button>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a href="/overview"><img class="navbar-brand brand-lg" src="/public/img/logo2-lg.png"><img class="navbar-brand brand-sm" src="/public/img/logo2-sm.png"></a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                username  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>  <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#" v-on='click: onClick($event)'>修改密码</a></li>
+              <li class="divider"></li>
+              <li><a href="#" v-on='click:onUpdate($event)'>固件升级</a></li>
+              <li class="divider"></li>
+              <li><a href="/logout">退出</a></li>
+
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+  <style>
+    /* navbar navigation */
+  .navbar {
+    border-radius: 0px;
+    z-index: 7000;
+    box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.26);
+    background-color: #182126;
+  }
+  .navbar .btn-sidebar{
+    float: left;
+    margin-left: 15px;
+  }
+  .navbar .navbar-brand{
+    padding: 10px;
+    float: left;
+  }
+  .navbar-nav > li > a {
+    color:#d2d2d2;
+  }
+  .navbar-nav > li > a:focus, .navbar-nav > li > a:hover{
+    color: #ffffff;
+    background-color: #182126;
+  }
+  .navbar-nav .open > a:focus, .navbar-nav .open > a, .nav .open > a:hover{
+    background-color: #FFF;
+    color: rgb(0, 0, 0);
+  }
+  .navbar-nav .open .dropdown-menu {
+      background-color: rgb(255, 255, 255);
+  }
+  .navbar-toggle .icon-bar{
+    background-color: #ffffff;
+  }
+  .navbar-nav > li > a > span {
+    margin: 0 5px;
+  }
+  @media (min-width: 546px) {
+    .navbar .navbar-brand.brand-lg{
+      display: block;
+      
+    }
+    .navbar .navbar-brand.brand-sm{
+      display: none;
+    }
+  }
+  @media (max-width: 545px) {
+    .navbar .navbar-brand.brand-sm{
+      display: block;
+      width: 202px;
+      margin-left: -15px;
+    }
+    .navbar .navbar-brand.brand-lg{
+      display: none;
+    }
+  }
+  @media (max-width: 319px) {
+    .navbar .navbar-brand.brand-sm{
+      display: none;
+    }
+    .navbar .navbar-brand.brand-lg{
+      display: none;
+    }
+  }
+</style>

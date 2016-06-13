@@ -1,0 +1,15 @@
+{{set . "title" "Backbone"}}
+{{set . "mainjs" "app.min"}}
+
+{{append . "moreStyles" "css/app.min.css"}}
+
+{{append . "moreScripts" "js/lib.min.js"}}
+
+
+{{template "header.html" .}}
+<div id="MainBody"></div>
+<script type="text/javascript">
+    window.username={{.username}}
+    window.version={{.version}}
+</script>
+{{template "footer.html" .}}

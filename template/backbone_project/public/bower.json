@@ -1,0 +1,19 @@
+{
+  "name": "timeconfig",
+  "main": "timeconfig.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/deepglint/backbone",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "~4.4.0",
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37",
+    "bootstrap": "~3.3.5"
+  }
+}

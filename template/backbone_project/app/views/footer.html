@@ -1,0 +1,6 @@
+  {{if eq .RunMode "dev"}}
+    {{template "debug.html" .}}
+  {{end}}
+  </body>
+  <script type="text/javascript" src="public/js/{{.mainjs}}.js"></script>
+</html>
