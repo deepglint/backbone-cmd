@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/codegangsta/cli"
-	"github.com/deepglint/backbone-cmd/controller"
-	"gopkg.in/gomail.v2"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,6 +11,10 @@ import (
 	"os/exec"
 	"strconv"
 	"time"
+
+	"github.com/codegangsta/cli"
+	"github.com/deepglint/backbone-cmd/controller"
+	"gopkg.in/gomail.v2"
 )
 
 var (
@@ -49,6 +50,16 @@ func main() {
 					Name:   "create",
 					Usage:  "Create a Vue Component",
 					Action: componentCreate,
+				},
+			},
+		}, {
+			Name:  "component2",
+			Usage: "Components2 actions",
+			Subcommands: []cli.Command{
+				{
+					Name:   "create",
+					Usage:  "Create a Vue Component for Vue2",
+					Action: componentCreate2,
 				},
 			},
 		}, {
@@ -327,6 +338,14 @@ func componentCreate(ctx *cli.Context) {
 		return
 	}
 	controller.CreateComponent(arg[0], "./")
+}
+func componentCreate2(ctx *cli.Context) {
+	arg := ctx.Args()
+	if len(arg) != 1 {
+		log.Println("Please just tell the name of component")
+		return
+	}
+	controller.CreateComponent2(arg[0], "./")
 }
 
 // vulcand创建规则
