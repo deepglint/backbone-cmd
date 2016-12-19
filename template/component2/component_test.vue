@@ -1,10 +1,9 @@
 <script>
 import test from "./{{component}}.vue"
+export default {
+    data(){
+        return {
 
-module.exports = {
-    data: function(){
-        return { 
-           
         }
     },
     components: {
@@ -14,9 +13,9 @@ module.exports = {
 </script>
 
 <template>
-    <div class="test-container">
-        <test :text_field="test_{{component}}"></test>
-    </div>
+<div class="test-container">
+    <test :text_field="test_{{component}}"></test>
+</div>
 </template>
 
 <style lang="sass">
