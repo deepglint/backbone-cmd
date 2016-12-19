@@ -1,0 +1,12 @@
+{{set . "title" "Backbone"}}
+{{set . "mainjs" "login"}}
+{{append . "moreStyles" "bower_components/font-awesome/css/font-awesome.min.css"}}
+
+{{append . "moreScripts" "js/lib.js"}}
+{{template "header.html" .}}
+
+<div id="MainBody"></div>
+<script type="text/javascript">
+    window.version = "{{.version}}"
+</script>
+{{template "footer.html" .}}

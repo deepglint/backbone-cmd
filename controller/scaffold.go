@@ -190,3 +190,79 @@ func ScaffoldTarget(sdir string, cmdPath string) error {
 	}
 	return nil
 }
+
+/**
+ * ScaffoldTarget
+ * 拷贝内容到指定目录
+ * sdir string 目标目录
+ * cmdPath string 命令行包目录位置
+ */
+func ScaffoldBackbone(sdir string, cmdPath string) error {
+
+	projectDir := path.Join(cmdPath, "template", "backbone_project", "./")
+	log.Println(projectDir)
+	// 复制文件夹
+	CopyDir(projectDir, sdir)
+
+	_, name := path.Split(sdir)
+
+	log.Println(name)
+	// 替换名字
+	err := ReplaceName(path.Join(sdir, "conf", "app.conf"), "{{project_name}}", name)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func InitBackbone() error {
+	cmdPath, err := getBackboneCmdPath()
+	log.Println(cmdPath, err)
+	if err != nil {
+		return err
+	}
+	log.Println(cmdPath)
+	// 获取pwd
+	pwd, _ := os.Getwd()
+
+	if err = ScaffoldBackbone(pwd, cmdPath); err != nil {
+		return err
+	}
+	return nil
+}
+
+/**
+ * 通过name创建工程
+ */
+func InitBackboneByName(name string) error {
+	cmdPath, err := getBackboneCmdPath()
+	if err != nil {
+		return err
+	}
+	log.Println(cmdPath)
+	// 获取pwd
+	pwd, _ := os.Getwd()
+	// 目录地址
+	sdir := path.Join(pwd, name)
+
+	log.Println(sdir, "sdir")
+	// 检测文件夹是否存在
+	dirExist, _ := pathExists(sdir)
+	if dirExist {
+		log.Println("文件夹已存在")
+		return errors.New("文件夹已存在")
+	}
+	// 创建目录
+	err = os.Mkdir(sdir, os.ModePerm)
+	if err != nil {
+		log.Println(err, "err")
+		return err
+	}
+	log.Println(dirExist, "dirExist")
+
+	if err = ScaffoldBackbone(sdir, cmdPath); err != nil {
+		return err
+	}
+
+	return nil
+}

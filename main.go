@@ -118,6 +118,18 @@ func main() {
 					Usage:  "脚手架初始化",
 					Action: scaffoldInit,
 				},
+				{
+					Name:  "backbone",
+					Usage: "init a backbone project",
+					// Flags: []cli.Flag{
+					// 	cli.StringFlag{
+					// 		Name:  "tag,t",
+					// 		Value: "",
+					// 		Usage: "Tag for the project",
+					// 	},
+					// },
+					Action: initBackbone,
+				},
 			},
 		},
 	}
@@ -389,4 +401,15 @@ func scaffoldInit(ctx *cli.Context) {
 		controller.InitScaffoldByName(arg[0])
 	}
 
+}
+
+func initBackbone(ctx *cli.Context) {
+	log.Println("####")
+	arg := ctx.Args()
+	switch len(arg) {
+	case 0:
+		controller.InitBackbone()
+	case 1:
+		controller.InitBackboneByName(arg[0])
+	}
 }
