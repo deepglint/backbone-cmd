@@ -43,6 +43,24 @@ func main() {
 	app.Email = "yanhuang@deepglint.com"
 	app.Commands = []cli.Command{
 		{
+			Name:  "bolt",
+			Usage: "BoltDB Help Cmd",
+			Subcommands: []cli.Command{
+				{
+					Name:  "ls",
+					Usage: "Ls a BoltDb Table",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "file,f",
+							Value: "",
+							Usage: "File to save the table info",
+						},
+					},
+					Action: boltLs,
+				},
+			},
+		},
+		{
 			Name:  "component",
 			Usage: "Components actions",
 			Subcommands: []cli.Command{
@@ -134,6 +152,20 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
+}
+
+func boltLs(ctx *cli.Context) {
+	arg := ctx.Args()
+	if len(arg) != 2 {
+		log.Println("Error for Arguments,There are only 2 for assigning db file and table name ")
+	}
+	f := ctx.String("file")
+	if f != "" {
+		controller.BoltLs2File(arg[0], arg[1], f)
+	} else {
+		controller.BoltLs(arg[0], arg[1])
+	}
+
 }
 
 //git push tags
