@@ -3,6 +3,9 @@
 		data:function(){
 			return {
 				//hello:"world"
+
+				text:"helloworld",
+				str:['1','2','3']
 			} 
 		},
 		props:{
@@ -59,7 +62,12 @@
 		                console.log(data);
 		               alert("error: "+data)
 		            }
-				});			
+				});	
+				this.testalert();		
+			},
+			testalert:function(){
+				console.log("test alert")
+				alert("test alert")
 			}
 		},
 		computed:{
@@ -89,7 +97,13 @@
 	}
 </script>
 <template>
- <div>
+ <div class="a">
+	 <div>{{text}}</div>
+	 <div class="row">
+		 <div class="col" v-for="i in str" class="col">
+			 {{i}}
+		 </div>
+	 </div>
  <button v-on:click="sendurl()">ClickMe</button>
  </div>
  </template>
@@ -97,5 +111,7 @@
 	button{
 		background-color:black;
 		color:white;
-	}
+		
+	};
+
 </style>
