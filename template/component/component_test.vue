@@ -1,15 +1,15 @@
 <script>
 
-module.exports={
-	el:"#show",
-	data:{
-	target:"{{component}}"
+module.exports = {
+	el: "#show",
+	data: {
+		target: "{{component}}"
 	},
-	ready:function(){
-	console.log("The {{component}} test main is loaded")
+	ready: function() {
+		console.log("The {{component}} test main is loaded")
 	},
-	components:{
-	'{{component}}vue':require('./{{component}}.vue')
+	components: {
+		'{{component}}vue': require('./{{component}}.vue')
 	}
 }
 </script>
