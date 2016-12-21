@@ -15,6 +15,10 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: "vue-loader"
+            },
+            {
+                test: /\.(png|jpg)$/,
+　　　　　　      loader: "url-loader?limit=100000&name=build/[hash:8].[name].[ext]"
             }
         ]
     }
