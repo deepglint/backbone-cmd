@@ -81,6 +81,16 @@ func main() {
 				},
 			},
 		}, {
+			Name:  "component2x",
+			Usage: "Components2x actions",
+			Subcommands: []cli.Command{
+				{
+					Name:   "create",
+					Usage:  "Create a Vue Component for Vue2&Vuex",
+					Action: componentCreate2x,
+				},
+			},
+		}, {
 			Name:  "vulcand",
 			Usage: "Generate Vulcand Script",
 			Subcommands: []cli.Command{
@@ -390,6 +400,14 @@ func componentCreate2(ctx *cli.Context) {
 		return
 	}
 	controller.CreateComponent2(arg[0], "./")
+}
+func componentCreate2x(ctx *cli.Context) {
+	arg := ctx.Args()
+	if len(arg) != 1 {
+		log.Println("Please just tell the name of component")
+		return
+	}
+	controller.CreateComponent2x(arg[0], "./")
 }
 
 // vulcand创建规则
