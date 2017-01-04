@@ -29,9 +29,6 @@ export default {
 	},
 	watch: {
 
-	},
-	events: {
-
 	}
 }
 </script>

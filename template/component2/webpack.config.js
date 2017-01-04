@@ -5,6 +5,8 @@ module.exports = {
     filename: "{{component}}_test.js"
   },
 
+  devtool: 'inline-source-map',
+
   module:  {
         loaders: [
             {
