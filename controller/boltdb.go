@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/deepglint/backbone-cmd/util"
+	util "git.coding.net/deepglint/devo/app/db"
 )
 
 func BoltLs(boltsrc, table string) {
@@ -29,6 +29,24 @@ func BoltLs(boltsrc, table string) {
 		print("\n")
 	}
 	return
+}
+
+func BoltLsTable(boltsrc string) {
+	bc := util.NewBoltDBController(boltsrc)
+	e := bc.InitDB()
+	if e != nil {
+		log.Println(e.Error())
+		return
+	}
+	defer bc.CloseDB()
+	t, e := bc.GetTables()
+	if e != nil {
+		log.Println(e.Error())
+		return
+	}
+	for _, v := range t {
+		println(v)
+	}
 }
 
 func BoltLs2File(boltsrc, table string, dest string) {

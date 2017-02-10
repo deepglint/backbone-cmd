@@ -57,6 +57,10 @@ func main() {
 						},
 					},
 					Action: boltLs,
+				}, {
+					Name:   "tables",
+					Usage:  "Ls All the Table names in DB",
+					Action: boltTableLs,
 				},
 			},
 		},
@@ -154,10 +158,20 @@ func main() {
 	app.Run(os.Args)
 }
 
+func boltTableLs(ctx *cli.Context) {
+	arg := ctx.Args()
+	if len(arg) < 1 {
+		log.Println("Error for Arguments,There are only 1 for assigning db file  ")
+		return
+	}
+	controller.BoltLsTable(arg[0])
+}
+
 func boltLs(ctx *cli.Context) {
 	arg := ctx.Args()
 	if len(arg) != 2 {
 		log.Println("Error for Arguments,There are only 2 for assigning db file and table name ")
+		return
 	}
 	f := ctx.String("file")
 	if f != "" {
