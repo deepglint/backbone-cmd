@@ -170,6 +170,58 @@ func CreateComponent2(name string, p string) error {
 	}
 	return nil
 }
+func CreateComponent2x(name string, p string) error {
+	log.Println(os.Getenv("GOPATH"))
+	var gopath string
+	if gopath = os.Getenv("GOPATH"); gopath == "" {
+		return errors.New("The env variable GOPATH is not existed")
+	}
+	if _, err := os.Stat(path.Join(p, name)); err == nil {
+		return errors.New("The Folder has already existed")
+	} else {
+		var cmd = exec.Command("mkdir", path.Join(p, name))
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+	}
+	var proj = path.Join(gopath, "src", "github.com/deepglint/backbone-cmd")
+	log.Println(proj)
+	if _, err := os.Stat(proj); err != nil {
+
+		return errors.New("The Project github.com/deepglint/backbone-cmd is not exist")
+	} else {
+		if err := execFile(name, path.Join(proj, "template", "component2x", "component.js"), path.Join(p, name, name+".js")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "component.vue"), path.Join(p, name, name+".vue")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "component.go"), path.Join(p, name, name+".go")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "component.html"), path.Join(p, name, name+".html")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "component_test.vue"), path.Join(p, name, name+"_test.vue")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "webpack.config.js"), path.Join(p, name, "webpack.config.js")); err != nil {
+
+			return err
+		}
+		if err := execFile(name, path.Join(proj, "template", "component2x", "package.json"), path.Join(p, name, "package.json")); err != nil {
+
+			return err
+		}
+
+	}
+	return nil
+}
 
 func execFile(name string, source string, dest string) error {
 	cmd := exec.Command("cp", "-rf", source, dest)

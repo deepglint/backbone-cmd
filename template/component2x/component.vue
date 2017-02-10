@@ -25,9 +25,11 @@ export default {
 		}
 	},
 	computed: {
-
 	},
 	watch: {
+
+	},
+	events: {
 
 	}
 }
